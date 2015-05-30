@@ -14,8 +14,6 @@ struct sockaddr_in make_socket_address_from_strings(char* address_str, char* por
   struct sockaddr_in address;
 
   address.sin_family = AF_INET;
-  address.sin_len = INET_ADDRSTRLEN;
-
   uint16_t port = parse_port(port_str);
   address.sin_port = htons(port);
 
@@ -36,7 +34,7 @@ struct sockaddr_in make_socket_address_from_strings(char* address_str, char* por
 void handle_connections_forever(int socket) {
   while(1) {
     struct sockaddr accepted_socket_address;
-    socklen_t accepted_socket_address_length;
+    socklen_t accepted_socket_address_length = sizeof(struct sockaddr_in);
     int accepted_fd = accept(socket, &accepted_socket_address, &accepted_socket_address_length);
     if(accepted_fd < 0) {
       perror("accept() error");
@@ -65,7 +63,7 @@ int main(int argc, char* const argv[]) {
 
   int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-  int bind_result = bind(sock, (struct sockaddr*) &address, address.sin_len);
+  int bind_result = bind(sock, (struct sockaddr*) &address, sizeof(struct sockaddr_in));
   if(bind_result < 0) {
     perror("bind() error");
     exit(1);
@@ -78,7 +76,7 @@ int main(int argc, char* const argv[]) {
   }
 
   const struct sockaddr_in bound_address;
-  socklen_t bound_address_length = address.sin_len;
+  socklen_t bound_address_length = sizeof(struct sockaddr_in);
   int result = getsockname(sock, (struct sockaddr*) &bound_address, &bound_address_length);
 
   char* bound_address_str = inet_ntoa(bound_address.sin_addr);
