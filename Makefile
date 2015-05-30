@@ -16,3 +16,5 @@ clean-echo:
 	rm -rf build/echo
 	mkdir -p build
 
+test: echo
+	test/echo_test.sh

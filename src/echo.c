@@ -48,6 +48,7 @@ void handle_connections_forever(int socket) {
       write(accepted_fd, input, 1);
       printf("%c", input[0]);
     }
+    close(accepted_fd);
   }
 }
 
