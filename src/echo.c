@@ -42,9 +42,12 @@ void handle_connections_forever(int socket) {
     }
 
     char input[1];
+    int bytes_written;
     while(1 == read(accepted_fd, input, 1)) {
-      write(accepted_fd, input, 1);
-      printf("%c", input[0]);
+      bytes_written = write(accepted_fd, input, 1);
+      if(bytes_written > 0) {
+        printf("%c", input[0]);
+      }
     }
     close(accepted_fd);
   }
@@ -78,10 +81,12 @@ int main(int argc, char* const argv[]) {
   const struct sockaddr_in bound_address;
   socklen_t bound_address_length = sizeof(struct sockaddr_in);
   int result = getsockname(sock, (struct sockaddr*) &bound_address, &bound_address_length);
+  printf("getsockname result: %d\n", result);
 
   char* bound_address_str = inet_ntoa(bound_address.sin_addr);
   uint16_t bound_port = ntohs(bound_address.sin_port);
   printf("Listening on: %s:%d\n", bound_address_str, bound_port);
 
   handle_connections_forever(sock);
+  return 0;
 }

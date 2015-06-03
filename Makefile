@@ -2,7 +2,7 @@ all: hello echo
 
 hello: clean-hello
 	@echo "Building Hello World"
-	@$(CC) -O3 src/hello.c -o build/hello
+	@$(CC) -O3 -Wall src/hello.c -o build/hello
 
 clean-hello:
 	rm -rf build/hello
@@ -10,7 +10,7 @@ clean-hello:
 
 echo: clean-echo
 	@echo "Building echo server"
-	@$(CC) -O3 src/echo.c -o build/echo
+	@$(CC) -O3 -Wall src/echo.c -o build/echo
 
 clean-echo:
 	rm -rf build/echo
