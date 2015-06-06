@@ -51,4 +51,4 @@ function test_successful_echo() {
 }
 
 test_successful_echo "ipv4 address" 127.0.0.1 4567
-#test_successful_echo "ipv6 address" ::1 4567
+test_successful_echo "ipv6 address" ::1 4567
