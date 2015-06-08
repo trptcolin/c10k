@@ -15,7 +15,7 @@ void handle_connections_forever(int socket) {
     int accepted_fd = accept(socket, &accepted_socket_address, &accepted_socket_address_length);
     if(accepted_fd < 0) {
       perror("accept() error");
-      exit(1);
+      exit(EXIT_FAILURE);
     }
 
     char input[1];
@@ -43,7 +43,7 @@ void print_addrinfo_results_node(struct addrinfo* my_addrinfo_results_node) {
       );
   if(my_getname_result != 0) {
     perror("getnameinfo() error");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   printf("host: '%s'\n", my_host_result);
   printf("port: '%s'\n", my_port_result);
@@ -63,7 +63,7 @@ int main(int argc, char* const argv[]) {
     requested_port = argv[2];
   } else {
     printf("Usage: echo [HOST] PORT_NUMBER\n");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   struct addrinfo hints = {
@@ -75,7 +75,7 @@ int main(int argc, char* const argv[]) {
   int getaddrinfo_result = getaddrinfo(requested_host, requested_port, &hints, &my_addrinfo_results_head_node);
   if(getaddrinfo_result != 0) {
     printf("Error parsing host/port: %s/%s: %s\n", requested_host, requested_port, gai_strerror(getaddrinfo_result));
-    exit(getaddrinfo_result);
+    exit(EXIT_FAILURE);
   }
 
   struct addrinfo* my_addrinfo_results_node;
@@ -101,16 +101,16 @@ int main(int argc, char* const argv[]) {
 
   if(sock == 0) {
     printf("socket wasn't bound\n");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   int listen_result = listen(sock, 1);
   if(listen_result < 0) {
     perror("listen() error");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   handle_connections_forever(sock);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
