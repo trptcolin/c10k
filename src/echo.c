@@ -50,7 +50,6 @@ void print_addrinfo_results_node(struct addrinfo* my_addrinfo_results_node) {
 }
 
 int main(int argc, char* const argv[]) {
-  struct addrinfo hints;
   struct addrinfo* my_addrinfo_results_head_node;
 
   char* requested_host;
@@ -67,11 +66,11 @@ int main(int argc, char* const argv[]) {
     exit(1);
   }
 
-  memset(&hints, 0, sizeof(struct addrinfo));
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST | AI_NUMERICSERV;
-  hints.ai_protocol = 0;
+  struct addrinfo hints = {
+    .ai_family = AF_UNSPEC,
+    .ai_socktype = SOCK_STREAM,
+    .ai_flags = AI_PASSIVE | AI_NUMERICHOST | AI_NUMERICSERV,
+  };
 
   int getaddrinfo_result = getaddrinfo(requested_host, requested_port, &hints, &my_addrinfo_results_head_node);
   if(getaddrinfo_result != 0) {
