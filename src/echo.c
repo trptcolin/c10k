@@ -69,7 +69,7 @@ int main(int argc, char* const argv[]) {
   struct addrinfo hints = {
     .ai_family = AF_UNSPEC,
     .ai_socktype = SOCK_STREAM,
-    .ai_flags = AI_PASSIVE | AI_NUMERICHOST | AI_NUMERICSERV,
+    .ai_flags = AI_PASSIVE,
   };
 
   int getaddrinfo_result = getaddrinfo(requested_host, requested_port, &hints, &my_addrinfo_results_head_node);
@@ -94,6 +94,7 @@ int main(int argc, char* const argv[]) {
       continue; // try another addrinfo result
     } else {
       print_addrinfo_results_node(my_addrinfo_results_node);
+      break; // found a good one
     }
   }
 
