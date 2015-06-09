@@ -16,7 +16,7 @@ void handle_connections_forever(int socket) {
                              &accepted_socket_address,
                              &accepted_socket_address_length);
     if(accepted_fd < 0) {
-      perror("accept() error");
+      perror("accept(2) error");
       continue;
     }
 
@@ -43,7 +43,7 @@ void print_addrinfo(struct addrinfo* addrinfo) {
                                       NI_MAXSERV,
                                       NI_NUMERICHOST | NI_NUMERICSERV);
   if(my_getname_result != 0) {
-    perror("getnameinfo() error");
+    perror("getnameinfo(3) error");
   } else {
     printf("host/port: '%s/%s'\n", host, port);
   }
@@ -61,10 +61,14 @@ int bind_socket(const char* host,
                                        &addrinfo_results_head);
   if(getaddrinfo_result != 0) {
     const char* error_string = gai_strerror(getaddrinfo_result);
-    printf("Error parsing host/port: %s/%s: %s\n", host, port, error_string);
+    fprintf(stderr,
+            "Error parsing host/port: %s/%s: %s\n",
+            host,
+            port,
+            error_string);
     return error;
   } else if (addrinfo_results_head == NULL) {
-    printf("No match found for host/port: %s/%s\n", host, port);
+    fprintf(stderr, "No match found for host/port: %s/%s\n", host, port);
     return error;
   }
 
@@ -86,7 +90,7 @@ int bind_socket(const char* host,
                            my_addrinfo_results_node->ai_addr,
                            my_addrinfo_results_node->ai_addrlen);
     if(bind_result < 0) {
-      perror("bind() error");
+      perror("bind(2) error");
       continue; // try another addrinfo result
     } else {
       print_addrinfo(my_addrinfo_results_node);
@@ -109,7 +113,7 @@ int main(int argc, char* const argv[]) {
     requested_host = argv[1];
     requested_port = argv[2];
   } else {
-    printf("Usage: echo [HOST] PORT_NUMBER\n");
+    fprintf(stderr, "Usage: echo [HOST] PORT_NUMBER\n");
     return EXIT_FAILURE;
   }
 
@@ -121,13 +125,13 @@ int main(int argc, char* const argv[]) {
 
   int sock = bind_socket(requested_host, requested_port, &hints);
   if(sock < 0) {
-    printf("socket wasn't bound\n");
+    fprintf(stderr, "Socket could not be bound\n");
     return EXIT_FAILURE;
   }
 
   int listen_result = listen(sock, 1);
   if(listen_result < 0) {
-    perror("listen() error");
+    perror("listen(2) error");
     return EXIT_FAILURE;
   }
 
