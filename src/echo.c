@@ -8,7 +8,19 @@
 #include <netdb.h>
 #include <string.h>
 
-void handle_connections_forever(int socket) {
+void handle_accepted_socket(int accepted_fd) {
+  char input[1];
+  int bytes_written;
+  while(1 == read(accepted_fd, input, 1)) {
+    bytes_written = write(accepted_fd, input, 1);
+    if(bytes_written > 0) {
+      printf("%c", input[0]);
+    }
+  }
+  close(accepted_fd);
+}
+
+void accept_connections_forever(int socket, void(*handle_accepted)(int)) {
   while(1) {
     struct sockaddr accepted_socket_address;
     socklen_t accepted_socket_address_length = sizeof(struct sockaddr);
@@ -20,14 +32,7 @@ void handle_connections_forever(int socket) {
       continue;
     }
 
-    char input[1];
-    int bytes_written;
-    while(1 == read(accepted_fd, input, 1)) {
-      bytes_written = write(accepted_fd, input, 1);
-      if(bytes_written > 0) {
-        printf("%c", input[0]);
-      }
-    }
+    handle_accepted(accepted_fd);
     close(accepted_fd);
   }
 }
@@ -102,21 +107,9 @@ int bind_socket(const char* host,
   return sock;
 }
 
-int main(int argc, char* const argv[]) {
-  char* requested_host = NULL;
-  char* requested_port = NULL;
-
-  if(argc == 2) {
-    requested_host = "0.0.0.0";
-    requested_port = argv[1];
-  } else if (argc == 3) {
-    requested_host = argv[1];
-    requested_port = argv[2];
-  } else {
-    fprintf(stderr, "Usage: echo [HOST] PORT_NUMBER\n");
-    return EXIT_FAILURE;
-  }
-
+int run_tcp_server(const char* requested_host,
+                   const char* requested_port,
+                   void(*handle_accepted)(int)) {
   struct addrinfo hints = {
     .ai_family = AF_UNSPEC,
     .ai_socktype = SOCK_STREAM,
@@ -135,7 +128,27 @@ int main(int argc, char* const argv[]) {
     return EXIT_FAILURE;
   }
 
-  handle_connections_forever(sock);
+  accept_connections_forever(sock, handle_accepted);
 
   return EXIT_SUCCESS;
+}
+
+int main(int argc, char* const argv[]) {
+  char* requested_host = NULL;
+  char* requested_port = NULL;
+
+  if(argc == 2) {
+    requested_host = "0.0.0.0";
+    requested_port = argv[1];
+  } else if (argc == 3) {
+    requested_host = argv[1];
+    requested_port = argv[2];
+  } else {
+    fprintf(stderr, "Usage: echo [HOST] PORT_NUMBER\n");
+    return EXIT_FAILURE;
+  }
+
+  return run_tcp_server(requested_host,
+                        requested_port,
+                        handle_accepted_socket);
 }
