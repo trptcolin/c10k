@@ -8,7 +8,10 @@
 #include <netdb.h>
 #include <string.h>
 
-void accept_connections_forever(int socket, void(*handle_accepted)(int)) {
+#include "tcp_server.h"
+
+static void __attribute__((noreturn))
+  accept_connections_forever(int socket, void(*handle_accepted)(int)) {
   while(1) {
     struct sockaddr accepted_socket_address;
     socklen_t accepted_socket_address_length = sizeof(struct sockaddr);
@@ -25,7 +28,7 @@ void accept_connections_forever(int socket, void(*handle_accepted)(int)) {
   }
 }
 
-void print_addrinfo(struct addrinfo* addrinfo) {
+static void print_addrinfo(struct addrinfo* addrinfo) {
   char host[NI_MAXHOST];
   char port[NI_MAXSERV];
   int my_getname_result = getnameinfo(addrinfo->ai_addr,
@@ -42,7 +45,7 @@ void print_addrinfo(struct addrinfo* addrinfo) {
   }
 }
 
-int bind_socket(const char* host,
+static int bind_socket(const char* host,
                 const char* port,
                 struct addrinfo* hints) {
   const int error = -1;
@@ -66,7 +69,7 @@ int bind_socket(const char* host,
   }
 
   struct addrinfo* my_addrinfo_results_node;
-  int sock;
+  int sock = -1;
   for(my_addrinfo_results_node = addrinfo_results_head;
       my_addrinfo_results_node != NULL;
       my_addrinfo_results_node = my_addrinfo_results_node->ai_next) {
@@ -120,5 +123,4 @@ int run_tcp_server(const char* requested_host,
 
   return EXIT_SUCCESS;
 }
-
 

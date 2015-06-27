@@ -1,5 +1,7 @@
 /.vagrant
 /out
+/objs
+/lib
 
 # Object files
 *.o

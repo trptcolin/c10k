@@ -4,9 +4,9 @@
 
 #include "tcp_server.h"
 
-void handle_accepted_socket(int accepted_fd) {
+static void handle_accepted_socket(int accepted_fd) {
   char input[1];
-  int bytes_written;
+  ssize_t bytes_written;
   while(1 == read(accepted_fd, input, 1)) {
     bytes_written = write(accepted_fd, input, 1);
     if(bytes_written > 0) {

@@ -1,12 +1,9 @@
+.PHONY: test
+
 all: echo
 
 clean:
-	rm -rf out/*
-	mkdir -p out
+	make -f build/MakefileEcho.mk clean
 
-echo: clean
-	@echo "Building echo server"
-	@$(CC) -D_GNU_SOURCE -std=c11 -O3 -Wall src/tcp_server.c src/echo.c -o out/echo
-
-test: echo
-	test/echo_test.sh
+test:
+	make -f build/MakefileEcho.mk acceptance-test
