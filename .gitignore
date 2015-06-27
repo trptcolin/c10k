@@ -1,5 +1,5 @@
 /.vagrant
-/build
+/out
 
 # Object files
 *.o

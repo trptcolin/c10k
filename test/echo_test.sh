@@ -31,7 +31,7 @@ function test_successful_echo() {
   test_name=$1
   test_server_host=$2
   test_server_port=$3
-  build/echo $test_server_host $test_server_port 2>&1 >/dev/null &
+  ./out/echo $test_server_host $test_server_port 2>&1 >/dev/null &
   server_pid=$!
 
   if ! wait_for_server_connection $test_server_host $test_server_port $max_wait_seconds; then

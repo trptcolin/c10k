@@ -1,20 +1,20 @@
 all: hello echo
 
 clean:
-	rm -rf build/*
-	mkdir -p build
+	rm -rf out/*
+	mkdir -p out
 
 hello: clean-hello
 	@echo "Building Hello World"
-	@$(CC) -std=c11 -O3 -Wall src/hello.c -o build/hello
+	@$(CC) -std=c11 -O3 -Wall src/hello.c -o out/hello
 
 clean-hello:
-	rm -rf build/hello
-	mkdir -p build
+	rm -rf out/hello
+	mkdir -p out
 
 echo: clean
 	@echo "Building echo server"
-	@$(CC) -D_GNU_SOURCE -std=c11 -O3 -Wall src/tcp_server.c src/echo.c -o build/echo
+	@$(CC) -D_GNU_SOURCE -std=c11 -O3 -Wall src/tcp_server.c src/echo.c -o out/echo
 
 test: echo
 	test/echo_test.sh
