@@ -1,15 +1,7 @@
-all: hello echo
+all: echo
 
 clean:
 	rm -rf out/*
-	mkdir -p out
-
-hello: clean-hello
-	@echo "Building Hello World"
-	@$(CC) -std=c11 -O3 -Wall src/hello.c -o out/hello
-
-clean-hello:
-	rm -rf out/hello
 	mkdir -p out
 
 echo: clean
